@@ -1,0 +1,59 @@
+{
+  "appName": "Mosaic Markdown Editor",
+  "menu": {
+    "file": "File",
+    "newFile": "New File",
+    "openFile": "Open File",
+    "saveFile": "Save",
+    "saveAsFile": "Save As",
+    "language": "Language",
+    "japanese": "日本語",
+    "english": "English"
+  },
+  "editor": {
+    "title": "Editor",
+    "placeholder": "Enter your Markdown here...",
+    "hasUnsavedChanges": "You have unsaved changes"
+  },
+  "preview": {
+    "title": "Preview",
+    "noContent": "No content to preview",
+    "loading": "Loading...",
+    "error": "An error occurred while parsing Markdown"
+  },
+  "notification": {
+    "fileOpened": "File opened: {{filename}}",
+    "fileSaved": "File saved: {{filename}}",
+    "fileOpenError": "Could not open file: {{error}}",
+    "fileSaveError": "Could not save file: {{error}}",
+    "fileLoaded": "File loaded: {{filename}}",
+    "fileLoadError": "File loading error: {{error}}",
+    "newFileCreated": "New file created",
+    "unsavedChanges": "You have unsaved changes. Do you want to save?",
+    "languageChanged": "Language changed to: {{language}}"
+  },
+  "dragDrop": {
+    "dropFilesHere": "Drop files here",
+    "supportedFormats": "Supported formats: .md, .markdown, .txt",
+    "invalidFileFormat": "Unsupported file format"
+  },
+  "welcome": {
+    "title": "Welcome to Mosaic Markdown Editor",
+    "subtitle": "Open a file or create a new document",
+    "openFile": "Open File",
+    "createNew": "Create New",
+    "dragDropHint": "You can also drag and drop files into the window"
+  },
+  "common": {
+    "ok": "OK",
+    "cancel": "Cancel",
+    "yes": "Yes",
+    "no": "No",
+    "save": "Save",
+    "close": "Close",
+    "error": "Error",
+    "success": "Success",
+    "warning": "Warning",
+    "info": "Info"
+  }
+} 
