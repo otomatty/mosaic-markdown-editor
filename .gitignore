@@ -19,9 +19,12 @@ dist-ssr
 .DS_Store
 *.suo
 *.ntvs*
-*.njsproj
+*.njsproj*
 *.sln
 *.sw?
+
+# Vite
+.vite/
 
 # Electron build outputs
 dist-electron/
