@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import { ThemeProvider } from '@mui/material/styles'
 import CssBaseline from '@mui/material/CssBaseline'
 import Toolbar from '@mui/material/Toolbar'
@@ -17,6 +17,7 @@ import PreviewPanel from './components/PreviewPanel'
 import WelcomeScreen from './components/WelcomeScreen'
 import NotificationSnackbar from './components/NotificationSnackbar'
 import DropTargetOverlay from './components/DropTargetOverlay'
+import { useAppSettings } from './hooks/useAppSettings'
 
 // Mosaic Window IDの型定義
 type MosaicWindowId = 'editor' | 'preview'
@@ -66,13 +67,17 @@ function App() {
   const { classes } = useStyles()
   const { t } = useTranslation()
   
-  // Mosaic レイアウトの状態管理
-  const [mosaicLayout, setMosaicLayout] = useState<MosaicNode<MosaicWindowId> | null>({
-    direction: 'row',
-    first: 'editor',
-    second: 'preview',
-    splitPercentage: 50,
-  })
+  // 設定管理フックの使用
+  const { 
+    settings, 
+    isLoading: isSettingsLoading,
+    updateMosaicLayout,
+    addRecentFile,
+    error: settingsError
+  } = useAppSettings()
+  
+  // Mosaic レイアウトの状態管理（設定から初期化）
+  const [mosaicLayout, setMosaicLayout] = useState<MosaicNode<MosaicWindowId> | null>(null)
   
   // ファイル操作の状態管理
   const [fileContent, setFileContent] = useState<string>('')
@@ -89,6 +94,31 @@ function App() {
     message: '',
     severity: 'info'
   })
+
+  // 設定が読み込まれたら初期化
+  useEffect(() => {
+    if (settings && !isSettingsLoading) {
+      // Mosaicレイアウトを設定から復元
+      if (settings.ui.mosaicLayout) {
+        setMosaicLayout(settings.ui.mosaicLayout as MosaicNode<MosaicWindowId>)
+      } else {
+        // デフォルトレイアウト
+        setMosaicLayout({
+          direction: 'row',
+          first: 'editor',
+          second: 'preview',
+          splitPercentage: 50,
+        })
+      }
+    }
+  }, [settings, isSettingsLoading])
+
+  // 設定エラーの通知
+  useEffect(() => {
+    if (settingsError) {
+      showNotification(`設定エラー: ${settingsError}`, 'error')
+    }
+  }, [settingsError])
 
   // Markdownプレビューの生成
   const previewHtml = useMemo(() => {
@@ -138,6 +168,14 @@ function App() {
         setCurrentFilePath(result.filePath)
         setHasUnsavedChanges(false)
         setIsEditorOpen(true)
+        
+        // 最近開いたファイルに追加（レンダラープロセス側での追加）
+        if (addRecentFile) {
+          addRecentFile(result.filePath).catch(error => {
+            console.error('Failed to add recent file:', error)
+          })
+        }
+        
         showNotification(t('notification.fileOpened', { filename: result.filePath }), 'success')
       } else {
         showNotification(t('notification.fileOpenError', { error: result.error || 'Unknown error' }), 'error')
@@ -213,10 +251,20 @@ function App() {
     
     try {
       const content = await file.text()
+      const filePath = file.path || file.name
+      
       setFileContent(content)
-      setCurrentFilePath(file.path || file.name)
+      setCurrentFilePath(filePath)
       setHasUnsavedChanges(false)
       setIsEditorOpen(true)
+      
+      // 最近開いたファイルに追加（パスが利用可能な場合のみ）
+      if (file.path && addRecentFile) {
+        addRecentFile(file.path).catch(error => {
+          console.error('Failed to add recent file:', error)
+        })
+      }
+      
       showNotification(t('notification.fileLoaded', { filename: file.name }), 'success')
     } catch (error) {
       showNotification(t('notification.fileLoadError', { error: error instanceof Error ? error.message : String(error) }), 'error')
@@ -226,6 +274,13 @@ function App() {
   // Mosaicレイアウトの変更処理
   const handleMosaicChange = (newLayout: MosaicNode<MosaicWindowId> | null) => {
     setMosaicLayout(newLayout)
+    
+    // 設定に保存（非同期で実行）
+    if (updateMosaicLayout) {
+      updateMosaicLayout(newLayout).catch(error => {
+        console.error('Failed to save mosaic layout:', error)
+      })
+    }
   }
 
   // MosaicWindowのレンダリング
