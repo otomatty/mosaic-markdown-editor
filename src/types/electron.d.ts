@@ -7,16 +7,49 @@ export interface FileOperationResult {
   error?: string
 }
 
+// 設定データの型定義
+export interface AppSettings {
+  window: {
+    width: number
+    height: number
+    x?: number
+    y?: number
+    isMaximized: boolean
+  }
+  ui: {
+    language: string
+    mosaicLayout: Record<string, unknown> | null // MosaicNode<MosaicWindowId> | null
+  }
+  files: {
+    recentFiles: string[]
+    maxRecentFiles: number
+  }
+}
+
+// 設定操作の結果
+export interface SettingsOperationResult {
+  success: boolean
+  error?: string
+}
+
 export interface ElectronAPI {
   // ファイル操作API
   openFile: () => Promise<FileOperationResult>
   saveFile: (filePath: string, content: string) => Promise<FileOperationResult>
   saveFileAs: (content: string) => Promise<FileOperationResult>
   
+  // 設定操作API
+  settings: {
+    get: <K extends keyof AppSettings>(key: K) => Promise<AppSettings[K]>
+    set: <K extends keyof AppSettings>(key: K, value: AppSettings[K]) => Promise<SettingsOperationResult>
+    reset: () => Promise<SettingsOperationResult>
+    getAll: () => Promise<AppSettings>
+  }
+  
   // 既存のIPC API
   ipcRenderer: {
     on: (channel: string, listener: (event: Electron.IpcRendererEvent, ...args: unknown[]) => void) => void
-    off: (channel: string, listener?: (event: Electron.IpcRendererEvent, ...args: unknown[]) => void) => void
+    off: (channel: string, listener: (event: Electron.IpcRendererEvent, ...args: unknown[]) => void) => void
     send: (channel: string, ...args: unknown[]) => void
     invoke: (channel: string, ...args: unknown[]) => Promise<unknown>
   }
