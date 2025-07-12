@@ -129,7 +129,8 @@ export const useAppSettings = (): UseAppSettingsReturn => {
   const updateMosaicLayout = useCallback(async (layout: MosaicNode<MosaicWindowId> | null) => {
     if (!settings) return
     
-    await updateUISettings({ mosaicLayout: layout })
+    // MosaicNodeをRecord<string, unknown>型として保存
+    await updateUISettings({ mosaicLayout: layout as Record<string, unknown> | null })
   }, [settings, updateUISettings])
 
   // 最近開いたファイルの追加

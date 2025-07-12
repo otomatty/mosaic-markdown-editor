@@ -7,6 +7,11 @@ import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import MenuIcon from '@mui/icons-material/Menu'
 import LanguageIcon from '@mui/icons-material/Language'
+import SettingsIcon from '@mui/icons-material/Settings'
+import HelpIcon from '@mui/icons-material/Help'
+import LightModeIcon from '@mui/icons-material/LightMode'
+import DarkModeIcon from '@mui/icons-material/DarkMode'
+import ComputerIcon from '@mui/icons-material/Computer'
 import { makeStyles } from 'tss-react/mui'
 import { useTranslation } from 'react-i18next'
 import FileMenu from '../FileMenu'
@@ -30,6 +35,11 @@ interface AppHeaderProps {
   onSaveFile: () => void
   onSaveAsFile: () => void
   onCreateNew: () => void
+  currentThemeMode?: 'light' | 'dark' | 'system'
+  onThemeChange?: (themeMode: 'light' | 'dark' | 'system') => void
+  onHelpDialogOpen?: () => void
+  onTemplateManagementOpen?: () => void
+  onThemeEditorOpen?: () => void
 }
 
 const AppHeader: React.FC<AppHeaderProps> = ({
@@ -42,10 +52,16 @@ const AppHeader: React.FC<AppHeaderProps> = ({
   onSaveFile,
   onSaveAsFile,
   onCreateNew,
+  currentThemeMode = 'system',
+  onThemeChange,
+  onHelpDialogOpen,
+  onTemplateManagementOpen,
+  onThemeEditorOpen,
 }) => {
   const { classes } = useStyles()
   const { t, i18n } = useTranslation()
   const [languageMenuAnchor, setLanguageMenuAnchor] = useState<HTMLElement | null>(null)
+  const [settingsMenuAnchor, setSettingsMenuAnchor] = useState<HTMLElement | null>(null)
 
   const handleLanguageMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setLanguageMenuAnchor(event.currentTarget)
@@ -59,6 +75,23 @@ const AppHeader: React.FC<AppHeaderProps> = ({
     i18n.changeLanguage(language)
     handleLanguageMenuClose()
   }
+
+  const handleSettingsMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setSettingsMenuAnchor(event.currentTarget)
+  }
+
+  const handleSettingsMenuClose = () => {
+    setSettingsMenuAnchor(null)
+  }
+
+  const handleThemeChange = (themeMode: 'light' | 'dark' | 'system') => {
+    if (onThemeChange) {
+      onThemeChange(themeMode)
+    }
+    handleSettingsMenuClose()
+  }
+
+
 
   return (
     <AppBar position="fixed" className={classes.appBar}>
@@ -113,6 +146,57 @@ const AppHeader: React.FC<AppHeaderProps> = ({
             {t('menu.english')}
           </MenuItem>
         </Menu>
+        <Button
+          color="inherit"
+          onClick={handleSettingsMenuOpen}
+          startIcon={<SettingsIcon />}
+          sx={{ ml: 1 }}
+        >
+          {t('menu.settings')}
+        </Button>
+        <Menu
+          anchorEl={settingsMenuAnchor}
+          open={Boolean(settingsMenuAnchor)}
+          onClose={handleSettingsMenuClose}
+        >
+          {onTemplateManagementOpen && (
+            <MenuItem onClick={() => { onTemplateManagementOpen(); handleSettingsMenuClose(); }}>
+              <SettingsIcon sx={{ mr: 1 }} />
+              {t('menu.templateManagement')}
+            </MenuItem>
+          )}
+          {onThemeEditorOpen && (
+            <MenuItem onClick={() => { onThemeEditorOpen(); handleSettingsMenuClose(); }}>
+              <SettingsIcon sx={{ mr: 1 }} />
+              {t('menu.themeEditor')}
+            </MenuItem>
+          )}
+          <MenuItem onClick={() => handleThemeChange('light')}>
+            <LightModeIcon sx={{ mr: 1 }} />
+            {t('menu.lightTheme')}
+            {currentThemeMode === 'light' && ' ✓'}
+          </MenuItem>
+          <MenuItem onClick={() => handleThemeChange('dark')}>
+            <DarkModeIcon sx={{ mr: 1 }} />
+            {t('menu.darkTheme')}
+            {currentThemeMode === 'dark' && ' ✓'}
+          </MenuItem>
+          <MenuItem onClick={() => handleThemeChange('system')}>
+            <ComputerIcon sx={{ mr: 1 }} />
+            {t('menu.systemTheme')}
+            {currentThemeMode === 'system' && ' ✓'}
+          </MenuItem>
+        </Menu>
+        {onHelpDialogOpen && (
+          <Button
+            color="inherit"
+            onClick={onHelpDialogOpen}
+            startIcon={<HelpIcon />}
+            sx={{ ml: 1 }}
+          >
+            {t('menu.help')}
+          </Button>
+        )}
       </Toolbar>
     </AppBar>
   )
