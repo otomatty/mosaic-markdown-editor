@@ -1,7 +1,15 @@
 {
-  "name": "mosaic-markdown-editor---template-react-ts",
+  "name": "mosaic-markdown-editor",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "description": "A modern Markdown editor with split-pane layout, real-time preview, and file management capabilities",
+  "author": "Mosaic Editor Team",
+  "license": "MIT",
+  "homepage": "https://github.com/mosaiceditor/mosaic-markdown-editor",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mosaiceditor/mosaic-markdown-editor.git"
+  },
   "type": "module",
   "scripts": {
     "dev": "vite",

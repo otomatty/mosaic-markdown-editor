@@ -100,7 +100,7 @@ function App() {
     if (settings && !isSettingsLoading) {
       // Mosaicレイアウトを設定から復元
       if (settings.ui.mosaicLayout) {
-        setMosaicLayout(settings.ui.mosaicLayout as MosaicNode<MosaicWindowId>)
+        setMosaicLayout(settings.ui.mosaicLayout)
       } else {
         // デフォルトレイアウト
         setMosaicLayout({

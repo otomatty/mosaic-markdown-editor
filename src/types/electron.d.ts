@@ -1,4 +1,8 @@
 // Electron API の型定義
+import { MosaicNode } from 'react-mosaic-component'
+
+// Mosaic Window IDの型定義
+type MosaicWindowId = 'editor' | 'preview'
 
 export interface FileOperationResult {
   success: boolean
@@ -18,7 +22,7 @@ export interface AppSettings {
   }
   ui: {
     language: string
-    mosaicLayout: Record<string, unknown> | null // MosaicNode<MosaicWindowId> | null
+    mosaicLayout: MosaicNode<MosaicWindowId> | null
   }
   files: {
     recentFiles: string[]

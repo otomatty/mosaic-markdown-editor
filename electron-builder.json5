@@ -1,12 +1,14 @@
 // @see - https://www.electron.build/configuration/configuration
 {
   "$schema": "https://raw.githubusercontent.com/electron-userland/electron-builder/master/packages/app-builder-lib/scheme.json",
-  "appId": "YourAppID",
+  "appId": "com.mosaiceditor.markdowneditor",
   "asar": true,
-  "productName": "YourAppName",
+  "productName": "Mosaic Markdown Editor",
+  "copyright": "Copyright © 2025 Mosaic Editor Team",
   "directories": {
     "output": "release/${version}"
   },
+  "icon": "public/app-icon.svg",
   "files": [
     "dist",
     "dist-electron"
