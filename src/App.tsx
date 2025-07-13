@@ -10,7 +10,7 @@ import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import { useTranslation } from 'react-i18next'
 import { marked } from 'marked'
-import { createAppTheme } from './theme'
+import { createAppTheme, createPresetTheme, createCustomTheme, resolveThemeMode } from './theme'
 import AppHeader from './components/AppHeader'
 import EditorPanel from './components/EditorPanel'
 import PreviewPanel from './components/PreviewPanel'
@@ -82,14 +82,144 @@ function App() {
     error: settingsError
   } = useAppSettings()
 
+  // プレビュー用テーマ状態（テーマエディタ用）
+  const [previewTheme, setPreviewTheme] = useState<ThemeSettings | null>(null)
+  
+    // カスタムテーマキャッシュ
+  const [customThemeCache, setCustomThemeCache] = useState<Map<string, import('./types/electron').CustomTheme>>(new Map())
+  
+  // カスタムテーマ取得関数
+  const getCustomTheme = useCallback(async (themeId: string) => {
+    try {
+      // キャッシュから取得を試す
+      if (customThemeCache.has(themeId)) {
+        return customThemeCache.get(themeId)
+      }
+      
+      // APIから取得
+      const themes = await window.electronAPI.themes.getAll()
+      const theme = themes.find(t => t.id === themeId)
+      
+      if (theme) {
+        // キャッシュに保存
+        setCustomThemeCache(prev => new Map(prev).set(themeId, theme))
+        return theme
+      }
+      
+      return null
+    } catch (error) {
+      console.error('Failed to get custom theme:', error)
+      return null
+    }
+  }, [customThemeCache])
+
+  // 解決されたカスタムテーマの状態
+  const [resolvedCustomTheme, setResolvedCustomTheme] = useState<import('./types/electron').CustomTheme | null>(null)
+  
+  // カスタムテーマの解決
+  useEffect(() => {
+    const resolveCustomTheme = async () => {
+      const themeSettings = previewTheme || settings?.ui.theme
+      
+      if (themeSettings?.mode === 'custom' && themeSettings.customThemeId) {
+        try {
+          const customTheme = await getCustomTheme(themeSettings.customThemeId)
+          setResolvedCustomTheme(customTheme || null)
+        } catch (error) {
+          console.error('Failed to resolve custom theme:', error)
+          setResolvedCustomTheme(null)
+        }
+      } else {
+        setResolvedCustomTheme(null)
+      }
+    }
+    
+    resolveCustomTheme()
+  }, [previewTheme, settings, getCustomTheme])
+
   // テーマ設定に基づいてテーマを動的に生成
   const currentTheme = useMemo(() => {
-    if (!settings) {
-      // 設定がまだ読み込まれていない場合はデフォルトライトテーマ
+    try {
+      // プレビューテーマが設定されている場合は優先
+      const themeSettings = previewTheme || settings?.ui.theme
+      
+      if (!themeSettings) {
+        // 設定がまだ読み込まれていない場合はデフォルトライトテーマ
+        return createAppTheme('light')
+      }
+      
+      console.log('Theme settings:', themeSettings, 'Legacy themeMode:', settings?.ui.themeMode)
+      
+      // 新しいテーマシステムの場合
+      if (themeSettings.mode) {
+        if (themeSettings.mode === 'preset' && themeSettings.presetTheme) {
+          let themeMode: 'light' | 'dark' = 'light'
+          
+          // テーマモードの決定（安全性チェック付き）
+          if (themeSettings.themeMode === 'system') {
+            const systemMode = resolveThemeMode('system')
+            themeMode = systemMode === 'dark' ? 'dark' : 'light'
+            console.log('System mode detected:', systemMode, 'Using theme mode:', themeMode)
+          } else if (themeSettings.themeMode === 'light' || themeSettings.themeMode === 'dark') {
+            themeMode = themeSettings.themeMode
+          } else {
+            // 不正な値の場合はライトモードにフォールバック
+            console.warn('Invalid themeMode:', themeSettings.themeMode, 'Falling back to light')
+            themeMode = 'light'
+          }
+          
+          console.log('Creating preset theme:', themeSettings.presetTheme, 'with mode:', themeMode)
+          return createPresetTheme(themeSettings.presetTheme, themeMode)
+        }
+        
+        if (themeSettings.mode === 'custom' && resolvedCustomTheme) {
+          // カスタムテーマが解決されている場合
+          let themeMode: 'light' | 'dark' = 'light'
+          
+          if (themeSettings.themeMode === 'system') {
+            const systemMode = resolveThemeMode('system')
+            themeMode = systemMode === 'dark' ? 'dark' : 'light'
+          } else if (themeSettings.themeMode === 'light' || themeSettings.themeMode === 'dark') {
+            themeMode = themeSettings.themeMode
+          } else {
+            console.warn('Invalid themeMode for custom theme:', themeSettings.themeMode, 'Falling back to light')
+            themeMode = 'light'
+          }
+          
+          console.log('Creating custom theme:', resolvedCustomTheme.name, 'with mode:', themeMode)
+          return createCustomTheme(resolvedCustomTheme, themeMode)
+        }
+        
+        if (themeSettings.mode === 'custom' && !resolvedCustomTheme) {
+          // カスタムテーマが解決されていない場合はフォールバック
+          let themeMode: 'light' | 'dark' = 'light'
+          
+          if (themeSettings.themeMode === 'system') {
+            const systemMode = resolveThemeMode('system')
+            themeMode = systemMode === 'dark' ? 'dark' : 'light'
+          } else if (themeSettings.themeMode === 'light' || themeSettings.themeMode === 'dark') {
+            themeMode = themeSettings.themeMode
+          } else {
+            console.warn('Invalid themeMode for custom theme:', themeSettings.themeMode, 'Falling back to light')
+            themeMode = 'light'
+          }
+          
+          // カスタムテーマのフォールバックにはdefaultテーマを使用
+          const fallbackPresetTheme = themeSettings.presetTheme || 'default'
+          console.log('Using custom theme fallback:', fallbackPresetTheme, 'with mode:', themeMode)
+          return createPresetTheme(fallbackPresetTheme, themeMode)
+        }
+      }
+      
+      // 後方互換性のため古い形式もサポート
+      console.log('Using legacy themeMode:', settings?.ui.themeMode || 'system')
+      return createAppTheme(settings?.ui.themeMode || 'system')
+    } catch (error) {
+      // テーマ生成でエラーが発生した場合はデフォルトテーマにフォールバック
+      console.error('Error creating theme:', error)
       return createAppTheme('light')
     }
-    return createAppTheme(settings.ui.themeMode)
-  }, [settings])
+  }, [settings, previewTheme, resolvedCustomTheme])
   
   // Mosaic レイアウトの状態管理（設定から初期化）
   const [mosaicLayout, setMosaicLayout] = useState<MosaicNode<MosaicWindowId> | null>(null)
@@ -348,33 +478,36 @@ function App() {
 
   const handleThemeEditorDialogClose = () => {
     setIsThemeEditorDialogOpen(false)
+    // ダイアログを閉じる際にプレビューをリセット
+    setPreviewTheme(null)
+    // カスタムテーマのキャッシュもクリア（メモリ効率のため）
+    setCustomThemeCache(new Map())
+    setResolvedCustomTheme(null)
   }
 
-  // テーマ変更処理
-  const handleThemeChange = async (themeMode: 'light' | 'dark' | 'system') => {
-    if (!updateUISettings) return
-    
-    try {
-      await updateUISettings({ themeMode })
-      showNotification(t('notification.themeChanged', { theme: t(`menu.${themeMode}Theme`) }), 'success')
-    } catch (error) {
-      showNotification(t('notification.themeChangeError', { error: error instanceof Error ? error.message : String(error) }), 'error')
-    }
-  }
-
-  // テーマエディタからのテーマ変更処理
+  // テーマエディタからのテーマ変更処理（プレビュー用）
   const handleThemeEditorChange = (theme: ThemeSettings) => {
-    console.log('ThemeEditorChange:', theme)
-    // プレビュー用の処理は必要に応じて実装
-    // 現在はダイアログ内で処理
+    console.log('ThemeEditorChange (Preview):', theme)
+    // プレビュー用テーマを設定（即座に反映）
+    setPreviewTheme(theme)
   }
 
-  // テーマエディタからのテーマ適用処理
+  // テーマエディタからのテーマ適用処理（設定保存）
   const handleThemeEditorApply = async (theme: ThemeSettings) => {
     if (!updateUISettings) return
     
     try {
-      await updateUISettings({ theme })
+      // テーマモードも適切に更新
+      const themeMode: 'light' | 'dark' | 'system' = theme.themeMode
+      
+      await updateUISettings({ 
+        theme,
+        themeMode  // 後方互換性のため
+      })
+      
+      // プレビューをリセット（設定が保存されたため）
+      setPreviewTheme(null)
+      
       showNotification(t('notification.themeChanged', { theme: theme.mode === 'preset' ? theme.presetTheme : 'custom' }), 'success')
     } catch (error) {
       showNotification(t('notification.themeChangeError', { error: error instanceof Error ? error.message : String(error) }), 'error')
@@ -477,8 +610,7 @@ function App() {
           onSaveFile={handleSaveFile}
           onSaveAsFile={handleSaveAsFile}
           onCreateNew={handleCreateNew}
-          currentThemeMode={settings?.ui.themeMode || 'system'}
-          onThemeChange={handleThemeChange}
+
           onHelpDialogOpen={handleHelpDialogOpen}
           onTemplateManagementOpen={handleTemplateManagementDialogOpen}
           onThemeEditorOpen={handleThemeEditorDialogOpen}
@@ -530,8 +662,9 @@ function App() {
           onClose={handleThemeEditorDialogClose}
           currentTheme={settings?.ui.theme || {
             mode: 'preset',
-            presetTheme: 'default-light',
+            presetTheme: 'default',
             customThemeId: null,
+            themeMode: 'system',
             autoSwitchMode: 'system',
             switchTimes: {
               lightTheme: '06:00',

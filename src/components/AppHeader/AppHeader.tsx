@@ -9,9 +9,7 @@ import MenuIcon from '@mui/icons-material/Menu'
 import LanguageIcon from '@mui/icons-material/Language'
 import SettingsIcon from '@mui/icons-material/Settings'
 import HelpIcon from '@mui/icons-material/Help'
-import LightModeIcon from '@mui/icons-material/LightMode'
-import DarkModeIcon from '@mui/icons-material/DarkMode'
-import ComputerIcon from '@mui/icons-material/Computer'
+
 import { makeStyles } from 'tss-react/mui'
 import { useTranslation } from 'react-i18next'
 import FileMenu from '../FileMenu'
@@ -35,8 +33,7 @@ interface AppHeaderProps {
   onSaveFile: () => void
   onSaveAsFile: () => void
   onCreateNew: () => void
-  currentThemeMode?: 'light' | 'dark' | 'system'
-  onThemeChange?: (themeMode: 'light' | 'dark' | 'system') => void
+
   onHelpDialogOpen?: () => void
   onTemplateManagementOpen?: () => void
   onThemeEditorOpen?: () => void
@@ -52,8 +49,6 @@ const AppHeader: React.FC<AppHeaderProps> = ({
   onSaveFile,
   onSaveAsFile,
   onCreateNew,
-  currentThemeMode = 'system',
-  onThemeChange,
   onHelpDialogOpen,
   onTemplateManagementOpen,
   onThemeEditorOpen,
@@ -84,12 +79,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({
     setSettingsMenuAnchor(null)
   }
 
-  const handleThemeChange = (themeMode: 'light' | 'dark' | 'system') => {
-    if (onThemeChange) {
-      onThemeChange(themeMode)
-    }
-    handleSettingsMenuClose()
-  }
+
 
 
 
@@ -171,21 +161,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({
               {t('menu.themeEditor')}
             </MenuItem>
           )}
-          <MenuItem onClick={() => handleThemeChange('light')}>
-            <LightModeIcon sx={{ mr: 1 }} />
-            {t('menu.lightTheme')}
-            {currentThemeMode === 'light' && ' ✓'}
-          </MenuItem>
-          <MenuItem onClick={() => handleThemeChange('dark')}>
-            <DarkModeIcon sx={{ mr: 1 }} />
-            {t('menu.darkTheme')}
-            {currentThemeMode === 'dark' && ' ✓'}
-          </MenuItem>
-          <MenuItem onClick={() => handleThemeChange('system')}>
-            <ComputerIcon sx={{ mr: 1 }} />
-            {t('menu.systemTheme')}
-            {currentThemeMode === 'system' && ' ✓'}
-          </MenuItem>
+
         </Menu>
         {onHelpDialogOpen && (
           <Button

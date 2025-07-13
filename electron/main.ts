@@ -21,8 +21,9 @@ const store = new Store<AppSettings>({
       themeMode: 'system', // 後方互換性のため残す
       theme: {
         mode: 'preset',
-        presetTheme: 'default-light',
+        presetTheme: 'default',
         customThemeId: null,
+        themeMode: 'system',
         autoSwitchMode: 'system',
         switchTimes: {
           lightTheme: '06:00',
@@ -125,12 +126,23 @@ function createWindow() {
 
   // Test active push message to Renderer-process.
   win.webContents.on('did-finish-load', () => {
+    console.log('Renderer process loaded successfully')
     win?.webContents.send('main-process-message', (new Date).toLocaleString())
   })
 
+  win.webContents.on('did-fail-load', (_, errorCode, errorDescription) => {
+    console.error('Failed to load renderer process:', errorCode, errorDescription)
+  })
+
+  win.webContents.on('render-process-gone', (_, details) => {
+    console.error('Renderer process gone:', details)
+  })
+
   if (VITE_DEV_SERVER_URL) {
+    console.log('Loading development server URL:', VITE_DEV_SERVER_URL)
     win.loadURL(VITE_DEV_SERVER_URL)
   } else {
+    console.log('Loading production file:', path.join(RENDERER_DIST, 'index.html'))
     // win.loadFile('dist/index.html')
     win.loadFile(path.join(RENDERER_DIST, 'index.html'))
   }

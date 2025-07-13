@@ -40,18 +40,13 @@ export interface TemplateOperationResult {
 
 // プリセットテーマの型定義
 export type PresetTheme = 
-  | 'default-light'
-  | 'default-dark'
-  | 'github-light'
-  | 'github-dark'
-  | 'vscode-light'
-  | 'vscode-dark'
-  | 'solarized-light'
-  | 'solarized-dark'
+  | 'default'
+  | 'github'
+  | 'vscode'
+  | 'solarized'
   | 'one-dark'
   | 'monokai'
-  | 'atom-light'
-  | 'atom-dark'
+  | 'atom'
 
 // カスタムテーマの型定義
 export interface CustomTheme {
@@ -80,6 +75,7 @@ export interface ThemeSettings {
   mode: 'preset' | 'custom'
   presetTheme: PresetTheme
   customThemeId: string | null
+  themeMode: 'light' | 'dark' | 'system'
   autoSwitchMode: 'off' | 'time' | 'system'
   switchTimes?: {
     lightTheme: string // HH:MM形式

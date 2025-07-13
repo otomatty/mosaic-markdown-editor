@@ -10,7 +10,8 @@ import {
   Box,
   Typography,
   TextField,
-
+  ToggleButton,
+  ToggleButtonGroup,
   Card,
   CardContent,
   IconButton,
@@ -39,6 +40,9 @@ import {
   Save as SaveIcon,
   Cancel as CancelIcon,
   MoreVert as MoreVertIcon,
+  LightMode as LightModeIcon,
+  DarkMode as DarkModeIcon,
+  Computer as ComputerIcon,
 } from '@mui/icons-material'
 import { makeStyles } from 'tss-react/mui'
 import { useTranslation } from 'react-i18next'
@@ -209,6 +213,7 @@ const ThemeEditorDialog: React.FC<ThemeEditorDialogProps> = ({
   const [customThemes, setCustomThemes] = useState<CustomTheme[]>([])
   const [selectedPreset, setSelectedPreset] = useState<PresetTheme>(currentTheme.presetTheme)
   const [selectedCustomTheme, setSelectedCustomTheme] = useState<CustomTheme | null>(null)
+  const [themeMode, setThemeMode] = useState<'light' | 'dark' | 'system'>(currentTheme.themeMode)
   const [isEditing, setIsEditing] = useState(false)
   const [isCreating, setIsCreating] = useState(false)
   const [editingTheme, setEditingTheme] = useState<CustomTheme | null>(null)
@@ -308,6 +313,35 @@ console.log(message);
       mode: 'preset',
       presetTheme: preset,
       customThemeId: null,
+      themeMode: themeMode,
+      autoSwitchMode: currentTheme.autoSwitchMode,
+      switchTimes: currentTheme.switchTimes,
+    }
+    onThemeChange(newTheme)
+  }
+
+  // テーマモード変更
+  const handleThemeModeChange = (mode: 'light' | 'dark' | 'system') => {
+    setThemeMode(mode)
+    const newTheme: ThemeSettings = {
+      mode: currentTheme.mode,
+      presetTheme: selectedPreset,
+      customThemeId: currentTheme.customThemeId,
+      themeMode: mode,
+      autoSwitchMode: mode === 'system' ? 'system' : 'off',
+      switchTimes: currentTheme.switchTimes,
+    }
+    onThemeChange(newTheme)
+  }
+
+  // カスタムテーマ選択
+  const handleCustomThemeSelect = (theme: CustomTheme) => {
+    setSelectedCustomTheme(theme)
+    const newTheme: ThemeSettings = {
+      mode: 'custom',
+      presetTheme: currentTheme.presetTheme,
+      customThemeId: theme.id,
+      themeMode: themeMode,
       autoSwitchMode: currentTheme.autoSwitchMode,
       switchTimes: currentTheme.switchTimes,
     }
@@ -523,7 +557,8 @@ console.log(message);
         mode: 'preset',
         presetTheme: selectedPreset,
         customThemeId: null,
-        autoSwitchMode: currentTheme.autoSwitchMode,
+        themeMode: themeMode,
+        autoSwitchMode: themeMode === 'system' ? 'system' : 'off',
         switchTimes: currentTheme.switchTimes,
       }
       onThemeApply(newTheme)
@@ -533,7 +568,8 @@ console.log(message);
         mode: 'custom',
         presetTheme: currentTheme.presetTheme,
         customThemeId: selectedCustomTheme.id,
-        autoSwitchMode: currentTheme.autoSwitchMode,
+        themeMode: themeMode,
+        autoSwitchMode: themeMode === 'system' ? 'system' : 'off',
         switchTimes: currentTheme.switchTimes,
       }
       onThemeApply(newTheme)
@@ -554,7 +590,23 @@ console.log(message);
             <PaletteIcon sx={{ mr: 1 }} />
             <Typography variant="h6">{t('themeEditor.title')}</Typography>
           </Box>
-          <Box display="flex" alignItems="center">
+          <Box display="flex" alignItems="center" gap={2}>
+            <ToggleButtonGroup
+              value={themeMode}
+              exclusive
+              onChange={(_, value) => value && handleThemeModeChange(value)}
+              size="small"
+            >
+              <ToggleButton value="light" aria-label="light mode">
+                <LightModeIcon />
+              </ToggleButton>
+              <ToggleButton value="dark" aria-label="dark mode">
+                <DarkModeIcon />
+              </ToggleButton>
+              <ToggleButton value="system" aria-label="system mode">
+                <ComputerIcon />
+              </ToggleButton>
+            </ToggleButtonGroup>
             <FormControlLabel
               control={
                 <Switch
@@ -784,7 +836,7 @@ console.log(message);
                     {customThemes.map((theme) => (
                       <ListItem
                         key={theme.id}
-                        onClick={() => setSelectedCustomTheme(theme)}
+                        onClick={() => handleCustomThemeSelect(theme)}
                         sx={{
                           backgroundColor: selectedCustomTheme?.id === theme.id ? 'action.selected' : 'transparent',
                           '&:hover': {
