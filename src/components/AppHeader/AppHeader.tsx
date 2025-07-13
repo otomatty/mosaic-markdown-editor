@@ -37,6 +37,7 @@ interface AppHeaderProps {
   onHelpDialogOpen?: () => void
   onTemplateManagementOpen?: () => void
   onThemeEditorOpen?: () => void
+  onTaskBoardOpen?: () => void
 }
 
 const AppHeader: React.FC<AppHeaderProps> = ({
@@ -52,6 +53,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({
   onHelpDialogOpen,
   onTemplateManagementOpen,
   onThemeEditorOpen,
+  onTaskBoardOpen,
 }) => {
   const { classes } = useStyles()
   const { t, i18n } = useTranslation()
@@ -159,6 +161,12 @@ const AppHeader: React.FC<AppHeaderProps> = ({
             <MenuItem onClick={() => { onThemeEditorOpen(); handleSettingsMenuClose(); }}>
               <SettingsIcon sx={{ mr: 1 }} />
               {t('menu.themeEditor')}
+            </MenuItem>
+          )}
+          {onTaskBoardOpen && (
+            <MenuItem onClick={() => { onTaskBoardOpen(); handleSettingsMenuClose(); }}>
+              <SettingsIcon sx={{ mr: 1 }} />
+              {t('menu.taskManagement')}
             </MenuItem>
           )}
 

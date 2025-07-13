@@ -21,6 +21,7 @@ import ShortcutHelpDialog from './components/ShortcutHelpDialog'
 import TemplateSelectionDialog from './components/TemplateSelectionDialog'
 import TemplateManagementDialog from './components/TemplateManagementDialog'
 import ThemeEditorDialog from './components/ThemeEditorDialog'
+import TaskBoardDialog from './components/TaskBoardDialog'
 import { useAppSettings } from './hooks/useAppSettings'
 import type { Template, ThemeSettings } from './types/electron'
 
@@ -243,6 +244,7 @@ function App() {
   const [isTemplateDialogOpen, setIsTemplateDialogOpen] = useState<boolean>(false)
   const [isTemplateManagementDialogOpen, setIsTemplateManagementDialogOpen] = useState<boolean>(false)
   const [isThemeEditorDialogOpen, setIsThemeEditorDialogOpen] = useState<boolean>(false)
+  const [isTaskBoardDialogOpen, setIsTaskBoardDialogOpen] = useState<boolean>(false)
 
   // 通知の表示
   const showNotification = useCallback((message: string, severity: 'success' | 'error' | 'info' | 'warning') => {
@@ -485,6 +487,14 @@ function App() {
     setResolvedCustomTheme(null)
   }
 
+  const handleTaskBoardDialogOpen = () => {
+    setIsTaskBoardDialogOpen(true)
+  }
+
+  const handleTaskBoardDialogClose = () => {
+    setIsTaskBoardDialogOpen(false)
+  }
+
   // テーマエディタからのテーマ変更処理（プレビュー用）
   const handleThemeEditorChange = (theme: ThemeSettings) => {
     console.log('ThemeEditorChange (Preview):', theme)
@@ -614,6 +624,7 @@ function App() {
           onHelpDialogOpen={handleHelpDialogOpen}
           onTemplateManagementOpen={handleTemplateManagementDialogOpen}
           onThemeEditorOpen={handleThemeEditorDialogOpen}
+          onTaskBoardOpen={handleTaskBoardDialogOpen}
         />
         <Toolbar /> {/* AppBarの高さ分のスペーサー */}
         <Box className={classes.content}>
@@ -673,6 +684,13 @@ function App() {
           }}
           onThemeChange={handleThemeEditorChange}
           onThemeApply={handleThemeEditorApply}
+        />
+        
+        <TaskBoardDialog
+          open={isTaskBoardDialogOpen}
+          onClose={handleTaskBoardDialogClose}
+          currentFileContent={fileContent}
+          currentFilePath={currentFilePath}
         />
       </div>
     </ThemeProvider>

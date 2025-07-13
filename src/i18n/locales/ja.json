@@ -12,6 +12,7 @@
     "settings": "設定",
     "templateManagement": "テンプレート管理",
     "themeEditor": "テーマエディタ",
+    "taskManagement": "タスク管理",
     "lightTheme": "ライトテーマ",
     "darkTheme": "ダークテーマ",
     "systemTheme": "システムに従う",
@@ -175,6 +176,109 @@
       "editorBorder": "エディタ境界線色"
     }
   },
+  "taskManagement": {
+    "title": "タスク管理",
+    "board": "タスクボード",
+    "boards": "タスクボード",
+    "task": "タスク",
+    "tasks": "タスク",
+    "createBoard": "タスクボードを作成",
+    "createTask": "タスクを作成",
+    "editBoard": "タスクボードを編集",
+    "editTask": "タスクを編集",
+    "deleteBoard": "タスクボードを削除",
+    "deleteTask": "タスクを削除",
+    "noBoards": "タスクボードがありません",
+    "noTasks": "タスクがありません",
+    "boardName": "ボード名",
+    "boardDescription": "ボード説明",
+    "taskTitle": "タスク名",
+    "taskDescription": "タスク説明",
+    "status": "ステータス",
+    "priority": "優先度",
+    "dueDate": "期限",
+    "tags": "タグ",
+    "createdAt": "作成日時",
+    "updatedAt": "更新日時",
+    "completedAt": "完了日時",
+    "statuses": {
+      "todo": "TODO",
+      "in-progress": "進行中",
+      "done": "完了"
+    },
+    "priorities": {
+      "low": "低",
+      "medium": "中",
+      "high": "高"
+    },
+    "actions": {
+      "extractFromMarkdown": "Markdownから抽出",
+      "syncToMarkdown": "Markdownと同期",
+      "exportBoard": "ボードを出力",
+      "importBoard": "ボードを取り込み",
+      "moveTask": "タスクを移動",
+      "duplicateTask": "タスクを複製",
+      "setDueDate": "期限を設定",
+      "addTag": "タグを追加",
+      "removeTag": "タグを削除",
+      "filterByTag": "タグでフィルタ",
+      "filterByPriority": "優先度でフィルタ",
+      "filterByStatus": "ステータスでフィルタ",
+      "sortBy": "並び替え",
+      "groupBy": "グループ化"
+    },
+    "notifications": {
+      "boardCreated": "タスクボード「{{name}}」を作成しました",
+      "boardUpdated": "タスクボード「{{name}}」を更新しました",
+      "boardDeleted": "タスクボード「{{name}}」を削除しました",
+      "taskCreated": "タスク「{{title}}」を作成しました",
+      "taskUpdated": "タスク「{{title}}」を更新しました",
+      "taskDeleted": "タスク「{{title}}」を削除しました",
+      "taskMoved": "タスク「{{title}}」を{{status}}に移動しました",
+      "tasksExtracted": "{{count}}個のタスクを抽出しました",
+      "tasksExtractedNone": "タスクが見つかりませんでした",
+      "boardExported": "タスクボードを出力しました",
+      "boardImported": "タスクボードを取り込みました",
+      "syncCompleted": "Markdownとの同期が完了しました",
+      "error": "エラー: {{error}}",
+      "boardCreateError": "タスクボードの作成に失敗しました",
+      "boardUpdateError": "タスクボードの更新に失敗しました",
+      "boardDeleteError": "タスクボードの削除に失敗しました",
+      "taskCreateError": "タスクの作成に失敗しました",
+      "taskUpdateError": "タスクの更新に失敗しました",
+      "taskDeleteError": "タスクの削除に失敗しました",
+      "extractError": "タスクの抽出に失敗しました",
+      "exportError": "出力に失敗しました",
+      "importError": "取り込みに失敗しました",
+      "syncError": "同期に失敗しました"
+    },
+    "dialog": {
+      "confirmDeleteBoard": "タスクボード「{{name}}」を削除しますか？この操作は取り消せません。",
+      "confirmDeleteTask": "タスク「{{title}}」を削除しますか？この操作は取り消せません。",
+      "confirmExtractTasks": "現在のMarkdownファイルからタスクを抽出しますか？",
+      "confirmSyncTasks": "タスクをMarkdownファイルと同期しますか？既存のタスクリストは更新されます。",
+      "boardNameRequired": "ボード名は必須です",
+      "taskTitleRequired": "タスク名は必須です",
+      "invalidDueDate": "有効な期限日を入力してください",
+      "tagAlreadyExists": "このタグは既に存在します",
+      "maxTagsReached": "タグの最大数に達しました"
+    },
+    "dragDrop": {
+      "dropHere": "ここにドロップ",
+      "moveToTodo": "TODOに移動",
+      "moveToInProgress": "進行中に移動",
+      "moveToDone": "完了に移動"
+    },
+    "kanban": {
+      "todoColumn": "TODO",
+      "inProgressColumn": "進行中",
+      "doneColumn": "完了",
+      "addTask": "タスクを追加",
+      "taskCount": "{{count}}個のタスク",
+      "emptyColumn": "このカラムにタスクがありません",
+      "dragTaskHere": "タスクをここにドラッグ"
+    }
+  },
   "common": {
     "loading": "読み込み中...",
     "cancel": "キャンセル",
@@ -189,6 +293,8 @@
     "error": "エラー",
     "success": "成功",
     "warning": "警告",
-    "info": "情報"
+    "info": "情報",
+    "all": "すべて",
+    "search": "検索"
   }
 } 
