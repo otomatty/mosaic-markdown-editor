@@ -9,6 +9,7 @@ import MenuIcon from '@mui/icons-material/Menu'
 import LanguageIcon from '@mui/icons-material/Language'
 import SettingsIcon from '@mui/icons-material/Settings'
 import HelpIcon from '@mui/icons-material/Help'
+import TaskIcon from '@mui/icons-material/Task'
 
 import { makeStyles } from 'tss-react/mui'
 import { useTranslation } from 'react-i18next'
@@ -37,6 +38,7 @@ interface AppHeaderProps {
   onHelpDialogOpen?: () => void
   onTemplateManagementOpen?: () => void
   onThemeEditorOpen?: () => void
+  onTaskManagementOpen?: () => void
 }
 
 const AppHeader: React.FC<AppHeaderProps> = ({
@@ -52,6 +54,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({
   onHelpDialogOpen,
   onTemplateManagementOpen,
   onThemeEditorOpen,
+  onTaskManagementOpen,
 }) => {
   const { classes } = useStyles()
   const { t, i18n } = useTranslation()
@@ -161,7 +164,12 @@ const AppHeader: React.FC<AppHeaderProps> = ({
               {t('menu.themeEditor')}
             </MenuItem>
           )}
-
+          {onTaskManagementOpen && (
+            <MenuItem onClick={() => { onTaskManagementOpen(); handleSettingsMenuClose(); }}>
+              <TaskIcon sx={{ mr: 1 }} />
+              {t('menu.taskManagement')}
+            </MenuItem>
+          )}
         </Menu>
         {onHelpDialogOpen && (
           <Button

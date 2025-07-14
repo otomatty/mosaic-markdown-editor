@@ -129,6 +129,105 @@ export interface SettingsOperationResult {
   error?: string
 }
 
+// タスク管理の型定義
+export interface Task {
+  id: string
+  title: string
+  description: string
+  status: TaskStatus
+  priority: TaskPriority
+  dueDate?: string // ISO 8601 format
+  createdAt: string
+  updatedAt: string
+  completedAt?: string
+  markdownFilePath?: string // 関連するMarkdownファイルのパス
+  lineNumber?: number // Markdownファイル内の行番号
+  tags: string[]
+  assignee?: string
+  estimatedTime?: number // 推定時間（分）
+  actualTime?: number // 実際の時間（分）
+}
+
+// タスクステータスの型定義
+export type TaskStatus = 
+  | 'todo'        // TODO
+  | 'in-progress' // 進行中
+  | 'completed'   // 完了
+  | 'on-hold'     // 保留
+  | 'cancelled'   // キャンセル
+
+// タスク優先度の型定義
+export type TaskPriority = 
+  | 'low'    // 低
+  | 'normal' // 普通
+  | 'high'   // 高
+  | 'urgent' // 緊急
+
+// タスクボードの型定義
+export interface TaskBoard {
+  id: string
+  name: string
+  description: string
+  columns: TaskColumn[]
+  createdAt: string
+  updatedAt: string
+  isDefault: boolean
+}
+
+// タスクカラムの型定義
+export interface TaskColumn {
+  id: string
+  name: string
+  status: TaskStatus
+  order: number
+  color: string
+  taskIds: string[]
+}
+
+// タスクフィルターの型定義
+export interface TaskFilter {
+  status?: TaskStatus[]
+  priority?: TaskPriority[]
+  tags?: string[]
+  assignee?: string
+  dueDateFrom?: string
+  dueDateTo?: string
+  textSearch?: string
+}
+
+// タスク操作の結果
+export interface TaskOperationResult {
+  success: boolean
+  task?: Task
+  error?: string
+}
+
+// タスクボード操作の結果
+export interface TaskBoardOperationResult {
+  success: boolean
+  board?: TaskBoard
+  error?: string
+}
+
+// Markdownからタスクを抽出する結果
+export interface MarkdownTaskExtractionResult {
+  success: boolean
+  tasks: Task[]
+  error?: string
+}
+
+// タスク統計情報
+export interface TaskStatistics {
+  totalTasks: number
+  completedTasks: number
+  inProgressTasks: number
+  todoTasks: number
+  onHoldTasks: number
+  cancelledTasks: number
+  completionRate: number
+  averageCompletionTime: number
+}
+
 export interface ElectronAPI {
   // ファイル操作API
   openFile: () => Promise<FileOperationResult>
@@ -167,6 +266,35 @@ export interface ElectronAPI {
     duplicate: (id: string) => Promise<CustomThemeOperationResult>
   }
   
+  // タスク管理API
+  tasks: {
+    getAll: () => Promise<Task[]>
+    getById: (id: string) => Promise<Task | null>
+    getByStatus: (status: TaskStatus) => Promise<Task[]>
+    getByFilter: (filter: TaskFilter) => Promise<Task[]>
+    create: (task: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>) => Promise<TaskOperationResult>
+    update: (id: string, task: Partial<Omit<Task, 'id' | 'createdAt' | 'updatedAt'>>) => Promise<TaskOperationResult>
+    delete: (id: string) => Promise<TaskOperationResult>
+    updateStatus: (id: string, status: TaskStatus) => Promise<TaskOperationResult>
+    bulkUpdate: (tasks: { id: string; updates: Partial<Task> }[]) => Promise<{ success: boolean; results: TaskOperationResult[] }>
+    extractFromMarkdown: (filePath: string, content: string) => Promise<MarkdownTaskExtractionResult>
+    getStatistics: () => Promise<TaskStatistics>
+  }
+  
+  // タスクボード管理API
+  taskBoards: {
+    getAll: () => Promise<TaskBoard[]>
+    getById: (id: string) => Promise<TaskBoard | null>
+    getDefault: () => Promise<TaskBoard | null>
+    create: (board: Omit<TaskBoard, 'id' | 'createdAt' | 'updatedAt'>) => Promise<TaskBoardOperationResult>
+    update: (id: string, board: Partial<Omit<TaskBoard, 'id' | 'createdAt' | 'updatedAt'>>) => Promise<TaskBoardOperationResult>
+    delete: (id: string) => Promise<TaskBoardOperationResult>
+    setDefault: (id: string) => Promise<TaskBoardOperationResult>
+    reorderColumns: (boardId: string, columnIds: string[]) => Promise<TaskBoardOperationResult>
+    reorderTasks: (boardId: string, columnId: string, taskIds: string[]) => Promise<TaskBoardOperationResult>
+    moveTask: (boardId: string, taskId: string, fromColumnId: string, toColumnId: string, newIndex: number) => Promise<TaskBoardOperationResult>
+  }
+
   // 既存のIPC API
   ipcRenderer: {
     on: (channel: string, listener: (event: Electron.IpcRendererEvent, ...args: unknown[]) => void) => void

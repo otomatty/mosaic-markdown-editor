@@ -193,13 +193,6 @@ const TemplateManagementDialog: React.FC<TemplateManagementDialogProps> = ({
     { value: 'other', label: t('templates.categories.other') },
   ]
 
-  // Load templates on mount
-  useEffect(() => {
-    if (open) {
-      loadTemplates()
-    }
-  }, [open])
-
   // Load templates from API
   const loadTemplates = useCallback(async () => {
     try {
@@ -213,6 +206,13 @@ const TemplateManagementDialog: React.FC<TemplateManagementDialogProps> = ({
       setLoading(false)
     }
   }, [])
+
+  // Load templates on mount
+  useEffect(() => {
+    if (open) {
+      loadTemplates()
+    }
+  }, [open, loadTemplates])
 
   // Filter templates based on search and category
   const filteredTemplates = useMemo(() => {
