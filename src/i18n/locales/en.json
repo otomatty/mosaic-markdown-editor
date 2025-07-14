@@ -12,6 +12,7 @@
     "settings": "Settings",
     "templateManagement": "Template Management",
     "themeEditor": "Theme Editor",
+    "taskManagement": "Task Management",
     "lightTheme": "Light Theme",
     "darkTheme": "Dark Theme",
     "systemTheme": "Follow System",
@@ -175,6 +176,109 @@
       "editorBorder": "Editor Border Color"
     }
   },
+  "taskManagement": {
+    "title": "Task Management",
+    "board": "Task Board",
+    "boards": "Task Boards",
+    "task": "Task",
+    "tasks": "Tasks",
+    "createBoard": "Create Task Board",
+    "createTask": "Create Task",
+    "editBoard": "Edit Task Board",
+    "editTask": "Edit Task",
+    "deleteBoard": "Delete Task Board",
+    "deleteTask": "Delete Task",
+    "noBoards": "No task boards available",
+    "noTasks": "No tasks available",
+    "boardName": "Board Name",
+    "boardDescription": "Board Description",
+    "taskTitle": "Task Title",
+    "taskDescription": "Task Description",
+    "status": "Status",
+    "priority": "Priority",
+    "dueDate": "Due Date",
+    "tags": "Tags",
+    "createdAt": "Created At",
+    "updatedAt": "Updated At",
+    "completedAt": "Completed At",
+    "statuses": {
+      "todo": "TODO",
+      "in-progress": "In Progress",
+      "done": "Done"
+    },
+    "priorities": {
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High"
+    },
+    "actions": {
+      "extractFromMarkdown": "Extract from Markdown",
+      "syncToMarkdown": "Sync to Markdown",
+      "exportBoard": "Export Board",
+      "importBoard": "Import Board",
+      "moveTask": "Move Task",
+      "duplicateTask": "Duplicate Task",
+      "setDueDate": "Set Due Date",
+      "addTag": "Add Tag",
+      "removeTag": "Remove Tag",
+      "filterByTag": "Filter by Tag",
+      "filterByPriority": "Filter by Priority",
+      "filterByStatus": "Filter by Status",
+      "sortBy": "Sort By",
+      "groupBy": "Group By"
+    },
+    "notifications": {
+      "boardCreated": "Task board \"{{name}}\" created",
+      "boardUpdated": "Task board \"{{name}}\" updated",
+      "boardDeleted": "Task board \"{{name}}\" deleted",
+      "taskCreated": "Task \"{{title}}\" created",
+      "taskUpdated": "Task \"{{title}}\" updated",
+      "taskDeleted": "Task \"{{title}}\" deleted",
+      "taskMoved": "Task \"{{title}}\" moved to {{status}}",
+      "tasksExtracted": "{{count}} tasks extracted",
+      "tasksExtractedNone": "No tasks found",
+      "boardExported": "Task board exported",
+      "boardImported": "Task board imported",
+      "syncCompleted": "Markdown synchronization completed",
+      "error": "Error: {{error}}",
+      "boardCreateError": "Failed to create task board",
+      "boardUpdateError": "Failed to update task board",
+      "boardDeleteError": "Failed to delete task board",
+      "taskCreateError": "Failed to create task",
+      "taskUpdateError": "Failed to update task",
+      "taskDeleteError": "Failed to delete task",
+      "extractError": "Failed to extract tasks",
+      "exportError": "Failed to export",
+      "importError": "Failed to import",
+      "syncError": "Failed to synchronize"
+    },
+    "dialog": {
+      "confirmDeleteBoard": "Are you sure you want to delete task board \"{{name}}\"? This action cannot be undone.",
+      "confirmDeleteTask": "Are you sure you want to delete task \"{{title}}\"? This action cannot be undone.",
+      "confirmExtractTasks": "Do you want to extract tasks from the current Markdown file?",
+      "confirmSyncTasks": "Do you want to sync tasks with the Markdown file? Existing task lists will be updated.",
+      "boardNameRequired": "Board name is required",
+      "taskTitleRequired": "Task title is required",
+      "invalidDueDate": "Please enter a valid due date",
+      "tagAlreadyExists": "This tag already exists",
+      "maxTagsReached": "Maximum number of tags reached"
+    },
+    "dragDrop": {
+      "dropHere": "Drop here",
+      "moveToTodo": "Move to TODO",
+      "moveToInProgress": "Move to In Progress",
+      "moveToDone": "Move to Done"
+    },
+    "kanban": {
+      "todoColumn": "TODO",
+      "inProgressColumn": "In Progress",
+      "doneColumn": "Done",
+      "addTask": "Add Task",
+      "taskCount": "{{count}} tasks",
+      "emptyColumn": "No tasks in this column",
+      "dragTaskHere": "Drag tasks here"
+    }
+  },
   "common": {
     "loading": "Loading...",
     "cancel": "Cancel",
@@ -189,6 +293,8 @@
     "error": "Error",
     "success": "Success",
     "warning": "Warning",
-    "info": "Info"
+    "info": "Info",
+    "all": "All",
+    "search": "Search"
   }
 } 

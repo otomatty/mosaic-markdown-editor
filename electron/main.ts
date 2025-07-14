@@ -53,6 +53,21 @@ const store = new Store<AppSettings>({
       showThemePreview: true,
       exportIncludeBuiltIn: false,
     },
+    tasks: {
+      taskBoards: [],
+      defaultBoardId: null,
+      autoExtractTasks: true,
+      showTaskBoardOnFileLoad: false,
+      taskDisplaySettings: {
+        showDescription: true,
+        showTags: true,
+        showDueDate: true,
+        showPriority: true,
+        groupByStatus: true,
+        sortBy: 'createdAt',
+        sortOrder: 'desc',
+      },
+    },
   },
 })
 

@@ -7,6 +7,59 @@ export interface FileOperationResult {
   error?: string
 }
 
+// タスク関連の型定義
+export interface Task {
+  id: string
+  title: string
+  description: string
+  status: TaskStatus
+  priority: TaskPriority
+  tags: string[]
+  dueDate: string | null
+  createdAt: string
+  updatedAt: string
+  completedAt: string | null
+  lineNumber: number | null // Markdownファイル内の行番号
+}
+
+// タスクステータスの型定義
+export type TaskStatus = 'todo' | 'in-progress' | 'done'
+
+// タスク優先度の型定義
+export type TaskPriority = 'low' | 'medium' | 'high'
+
+// タスクボードの型定義
+export interface TaskBoard {
+  id: string
+  name: string
+  description: string
+  filePath: string | null // 関連するMarkdownファイル
+  tasks: Task[]
+  createdAt: string
+  updatedAt: string
+}
+
+// タスク操作の結果
+export interface TaskOperationResult {
+  success: boolean
+  task?: Task
+  error?: string
+}
+
+// タスクボード操作の結果
+export interface TaskBoardOperationResult {
+  success: boolean
+  board?: TaskBoard
+  error?: string
+}
+
+// タスク抽出の結果
+export interface TaskExtractionResult {
+  success: boolean
+  tasks: Task[]
+  error?: string
+}
+
 // テンプレートの型定義
 export interface Template {
   id: string
@@ -121,6 +174,21 @@ export interface AppSettings {
     showThemePreview: boolean
     exportIncludeBuiltIn: boolean
   }
+  tasks: {
+    taskBoards: TaskBoard[]
+    defaultBoardId: string | null
+    autoExtractTasks: boolean
+    showTaskBoardOnFileLoad: boolean
+    taskDisplaySettings: {
+      showDescription: boolean
+      showTags: boolean
+      showDueDate: boolean
+      showPriority: boolean
+      groupByStatus: boolean
+      sortBy: 'title' | 'priority' | 'dueDate' | 'createdAt' | 'updatedAt'
+      sortOrder: 'asc' | 'desc'
+    }
+  }
 }
 
 // 設定操作の結果
@@ -165,6 +233,32 @@ export interface ElectronAPI {
     exportTheme: (id: string) => Promise<FileOperationResult>
     importTheme: (filePath: string) => Promise<CustomThemeOperationResult>
     duplicate: (id: string) => Promise<CustomThemeOperationResult>
+  }
+  
+  // タスク管理API
+  tasks: {
+    // タスクボード操作
+    getAllBoards: () => Promise<TaskBoard[]>
+    getBoardById: (id: string) => Promise<TaskBoard | null>
+    createBoard: (board: Omit<TaskBoard, 'id' | 'createdAt' | 'updatedAt'>) => Promise<TaskBoardOperationResult>
+    updateBoard: (id: string, board: Partial<Omit<TaskBoard, 'id' | 'createdAt' | 'updatedAt'>>) => Promise<TaskBoardOperationResult>
+    deleteBoard: (id: string) => Promise<TaskBoardOperationResult>
+    
+    // タスク操作
+    getAllTasks: (boardId: string) => Promise<Task[]>
+    getTaskById: (id: string) => Promise<Task | null>
+    createTask: (boardId: string, task: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>) => Promise<TaskOperationResult>
+    updateTask: (id: string, task: Partial<Omit<Task, 'id' | 'createdAt' | 'updatedAt'>>) => Promise<TaskOperationResult>
+    deleteTask: (id: string) => Promise<TaskOperationResult>
+    
+    // タスク抽出機能
+    extractTasksFromMarkdown: (content: string) => Promise<TaskExtractionResult>
+    extractTasksFromFile: (filePath: string) => Promise<TaskExtractionResult>
+    syncTasksToMarkdown: (boardId: string, filePath: string) => Promise<FileOperationResult>
+    
+    // インポート・エクスポート
+    exportBoard: (id: string) => Promise<FileOperationResult>
+    importBoard: (filePath: string) => Promise<TaskBoardOperationResult>
   }
   
   // 既存のIPC API
